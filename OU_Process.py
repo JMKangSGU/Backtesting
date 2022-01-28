@@ -3,6 +3,7 @@ import pandas as pd
 from typing import Union
 import statsmodels.api as sm
 from scipy.stats import t as T
+from pandas import Int64Index as NumericIndex
 
 class Ornstein_Uhlenbeck:
 
@@ -17,8 +18,9 @@ class Ornstein_Uhlenbeck:
         self.sigma = None
         self.theta = None
         self.t, self.i = None, None
-        self.confidence_interval_ = None
         self.method = method
+        self.confidence_interval_ = None
+        self.half_life_ = None
 
         if type(period) == str:
             if period == 'daily':
@@ -46,6 +48,7 @@ class Ornstein_Uhlenbeck:
             self.theta = -np.log(phi)/self.dt
             self.mu = alpha/(1-phi)
             self.sigma = np.sqrt(epsilon/self.dt)
+            self.half_life_ = np.log(2)/self.theta
 
         elif self.method == 'max_likelihood':
             None
@@ -73,5 +76,6 @@ if __name__ == '__main__':
     model.fit()
     pred = model.predict(20)
     print(model.confidence_interval_)
+    print(model.half_life_)
     plt.hist(pred)
     plt.show()
