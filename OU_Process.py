@@ -67,11 +67,11 @@ class Ornstein_Uhlenbeck:
         return S
 
 if __name__ == '__main__':
-    import yfinance as yf
+    import FinanceDataReader as fdr
     import matplotlib.pyplot as plt
     from OU_Process import Ornstein_Uhlenbeck
 
-    df = yf.download('^GSPC', '2020-01-01', '2022-01-01').Close
+    df = fdr.DataReader('KO', '2017-01-01', '2022-01-01').Close
     model = Ornstein_Uhlenbeck(df, period='daily')
     model.fit()
     pred = model.predict(20)
