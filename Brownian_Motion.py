@@ -107,10 +107,15 @@ if __name__ == '__main__':
     from Brownian_Motion import Brownian
     import matplotlib.pyplot as plt
 
-    df = yf.download('^GSPC', '2020-01-01', '2022-01-01').Close
+    df = yf.download('KO', '2017-01-01', '2022-01-01').Close
     model = Brownian(df, process='standard', period='daily')
     model.fit()
-    prediction = model.predict(t=20)
+    paths = []
+    for i in range(100):
+        paths.append(model.predict(t=i))
+    plt.plot(paths)
+    plt.show()
+    prediction = model.predict(t=100)
     print(model.confidence_level_)
     plt.hist(prediction)
     plt.show()
