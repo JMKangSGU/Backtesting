@@ -3,17 +3,20 @@ import pandas as pd
 from typing import Union
 import statsmodels.api as sm
 from scipy.stats import t as T
-from pandas import Int64Index as NumericIndex
+
 
 class Ornstein_Uhlenbeck:
 
-    def __init__(self, series: Union[pd.Series, np.array],
-                 period: Union[str, int, float],
-                 method: str='least_square'):
+    def __init__(
+            self,
+            series: Union[pd.Series, np.array],
+            period: Union[str, int, float],
+            method: str='least_square'):
 
         if type(series) == pd.Series:
             self.time_series = np.array(series)
-        else: self.time_series = series
+        else:
+            self.time_series = series
         self.mu = None
         self.sigma = None
         self.theta = None
@@ -32,7 +35,7 @@ class Ornstein_Uhlenbeck:
         elif type(period) == int or float:
             self.dt = period
         else:
-            raise KeyError('daily, monthly, year, int or float')
+            raise TypeError('daily, monthly, year, int or float')
 
 
     def fit(self):
@@ -53,8 +56,12 @@ class Ornstein_Uhlenbeck:
         elif self.method == 'max_likelihood':
             None
 
-    def predict(self, t: int, i: int=10000, cl: float=.95
-                ):
+    def predict(
+            self,
+            t: int,
+            i: int=10000,
+            cl: float=.95
+    ):
 
         self.t, self.i = t, i
         S = self.time_series[-1]*np.exp(-self.theta*t*self.dt) + \
@@ -66,16 +73,29 @@ class Ornstein_Uhlenbeck:
         self.confidence_interval_ = T.interval(cl, dof, loc=mean, scale=std)
         return S
 
+
+    def simulation(self, mu, sigma, theta, n):
+        X = np.zeros(n)
+        for i in range(1, n):
+            X[i] = X[i-1] + theta*(mu - X[i-1])*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
+        return X
+
 if __name__ == '__main__':
     import FinanceDataReader as fdr
     import matplotlib.pyplot as plt
-    from OU_Process import Ornstein_Uhlenbeck
+
 
     df = fdr.DataReader('KO', '2017-01-01', '2022-01-01').Close
     model = Ornstein_Uhlenbeck(df, period='daily')
     model.fit()
+    paths = []
+    for i in range(20):
+        paths.append(model.predict(t=i))
+    paths = np.array(paths)
+    plt.plot(paths[:, :20])
+    plt.show()
     pred = model.predict(20)
-    print(model.confidence_interval_)
-    print(model.half_life_)
     plt.hist(pred)
     plt.show()
+    print(model.confidence_interval_)
+    print(model.half_life_)

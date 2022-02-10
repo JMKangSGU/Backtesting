@@ -102,9 +102,26 @@ class Brownian:
             return self._gbm(S, t, confidence_level)
 
 
+    def simulation(self, mu, sigma, n):
+
+        X = np.zeros(n)
+        if self.process == 'standard':
+            for i in range(1, n):
+                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)
+
+        elif self.process == 'arithmetic':
+            for i in range(1, n):
+                X[i] = X[i-1] + mu*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
+
+        elif self.process == 'geometric':
+            for i in range(1, n):
+                X[i] = X[i-1] * np.exp( mu*X[i-1]*self.dt + sigma*X[i-1]*np.random.normal(loc=0.0, scale=1.0) )
+
+        return X
+
+
 if __name__ == '__main__':
     import FinanceDataReader as fdr
-    from Brownian_Motion import Brownian
     import matplotlib.pyplot as plt
 
     df = fdr.DataReader('KO', '2017-01-01', '2022-01-01').Close
