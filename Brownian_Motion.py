@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Optional
 from scipy.stats import t as T
 
 class Brownian:
 
-    def __init__(self, series: Union[pd.Series, np.array],
+    def __init__(self, series: Optional[pd.Series, np.array],
                  process: str,
                  period: Union[str, int, float],
                  ):

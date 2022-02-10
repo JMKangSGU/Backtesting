@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Optional
 import statsmodels.api as sm
 from scipy.stats import t as T
 
@@ -9,7 +9,7 @@ class Ornstein_Uhlenbeck:
 
     def __init__(
             self,
-            series: Union[pd.Series, np.array],
+            series: Optional[pd.Series, np.array],
             period: Union[str, int, float],
             method: str='least_square'):
 
