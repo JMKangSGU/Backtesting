@@ -15,8 +15,12 @@ class Ornstein_Uhlenbeck:
 
         if type(series) == pd.Series:
             self.time_series = np.array(series)
-        else:
+        elif type(series) == np.array:
             self.time_series = series
+        elif type(series) == None:
+            self.times_series = None
+        else: raise TypeError('pd.Series, np.array or None(for simulation)')
+
         self.mu = None
         self.sigma = None
         self.theta = None
