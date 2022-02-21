@@ -1,11 +1,11 @@
 import numpy as np
 import pandas as pd
-from typing import Union, Optional
+from typing import Union
 from scipy.stats import t as T
 
 class Brownian:
 
-    def __init__(self, series: Optional[pd.Series, np.array],
+    def __init__(self, series: Union[pd.Series, np.array, None],
                  process: str,
                  period: Union[str, int, float],
                  ):
@@ -115,7 +115,7 @@ class Brownian:
 
         elif self.process == 'geometric':
             for i in range(1, n):
-                X[i] = X[i-1] * np.exp( mu*X[i-1]*self.dt + sigma*X[i-1]*np.random.normal(loc=0.0, scale=1.0) )
+                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0))
 
         return X
 
