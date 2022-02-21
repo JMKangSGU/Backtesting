@@ -12,7 +12,11 @@ class Brownian:
 
         if type(series) == pd.Series:
             self.time_series = np.array(series)
-        else: self.time_series = series
+        elif type(series) == np.array:
+            self.time_series = series
+        elif type(series) == None:
+            self.times_series = None
+        else: raise TypeError('pd.Series, np.array or None(for simulation)')
         self.process = process
         self.mu, self.std = None, None
         self.t, self.i = None, None
