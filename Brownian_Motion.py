@@ -14,7 +14,7 @@ class Brownian:
             self.time_series = np.array(series)
         elif type(series) == np.array:
             self.time_series = series
-        elif type(series) == None:
+        elif series is None:
             self.times_series = None
         else: raise TypeError('pd.Series, np.array or None(for simulation)')
 
