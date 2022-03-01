@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from typing import Union
+from typing import Union, Optional
 from scipy.stats import t as T
 
 class Brownian:
@@ -107,12 +107,13 @@ class Brownian:
             return self._gbm(S, t, confidence_level)
 
 
-    def simulation(self, mu, sigma, n):
+    def simulation(self, mu: Optional[float], sigma, n):
 
         X = np.zeros(n)
+        X[0] = 100
         if self.process == 'standard':
             for i in range(1, n):
-                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)
+                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(self.dt)
 
         elif self.process == 'arithmetic':
             for i in range(1, n):
@@ -120,7 +121,7 @@ class Brownian:
 
         elif self.process == 'geometric':
             for i in range(1, n):
-                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0))
+                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*self.dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(self.dt))
 
         return X
 
