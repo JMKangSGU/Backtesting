@@ -80,6 +80,7 @@ class Ornstein_Uhlenbeck:
 
     def simulation(self, mu, sigma, theta, n):
         X = np.zeros(n)
+        X[0] = 100
         for i in range(1, n):
             X[i] = X[i-1] + theta*(mu - X[i-1])*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
         return X
