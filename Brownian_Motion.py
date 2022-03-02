@@ -107,10 +107,15 @@ class Brownian:
             return self._gbm(S, t, confidence_level)
 
 
-    def simulation(self, mu: Optional[float], sigma, n):
+    def simulation(self,
+                   mu: Optional[float],
+                   sigma,
+                   n,
+                   initial_value: Union[int, float] = 100,
+                   ):
 
         X = np.zeros(n)
-        X[0] = 100
+        X[0] = initial_value
         if self.process == 'standard':
             for i in range(1, n):
                 X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(self.dt)
