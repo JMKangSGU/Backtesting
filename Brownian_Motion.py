@@ -106,8 +106,8 @@ class Brownian:
         elif self.process == 'geometric':
             return self._gbm(S, t, confidence_level)
 
-
-    def simulation(self,
+    @classmethod
+    def simulation(cls,
                    mu: Optional[float],
                    sigma,
                    n,
@@ -116,17 +116,17 @@ class Brownian:
 
         X = np.zeros(n)
         X[0] = initial_value
-        if self.process == 'standard':
+        if cls.process == 'standard':
             for i in range(1, n):
-                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(self.dt)
+                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(cls.dt)
 
-        elif self.process == 'arithmetic':
+        elif cls.process == 'arithmetic':
             for i in range(1, n):
-                X[i] = X[i-1] + mu*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
+                X[i] = X[i-1] + mu*cls.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
 
-        elif self.process == 'geometric':
+        elif cls.process == 'geometric':
             for i in range(1, n):
-                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*self.dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(self.dt))
+                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*cls.dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(cls.dt))
 
         return X
 
