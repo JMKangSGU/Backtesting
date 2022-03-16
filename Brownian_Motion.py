@@ -105,7 +105,7 @@ class Brownian:
             return self._gbm(S, t, confidence_level)
 
     @staticmethod
-    def simulation(
+    def simulation(process: str,
                    mu: Optional[float],
                    sigma,
                    n,
@@ -115,15 +115,15 @@ class Brownian:
 
         X = np.zeros(n)
         X[0] = initial_value
-        if cls.process == 'standard':
+        if process == 'standard':
             for i in range(1, n):
                 X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(dt)
 
-        elif cls.process == 'arithmetic':
+        elif process == 'arithmetic':
             for i in range(1, n):
                 X[i] = X[i-1] + mu*dt + sigma*np.random.normal(loc=0.0, scale=1.0)
 
-        elif cls.process == 'geometric':
+        elif process == 'geometric':
             for i in range(1, n):
                 X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(dt))
 
