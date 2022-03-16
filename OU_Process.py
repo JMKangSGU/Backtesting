@@ -77,11 +77,11 @@ class Ornstein_Uhlenbeck:
         self.confidence_interval_ = T.interval(cl, dof, loc=mean, scale=std)
         return S
 
-
-    def simulation(self, mu, sigma, theta, n):
+    @classmethod
+    def simulation(cls, mu, sigma, theta, n):
         X = np.zeros(n)
         for i in range(1, n):
-            X[i] = X[i-1] + theta*(mu - X[i-1])*self.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
+            X[i] = X[i-1] + theta*(mu - X[i-1])*cls.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
         return X
 
 if __name__ == '__main__':
