@@ -5,7 +5,7 @@ from scipy.stats import t as T
 
 class Brownian:
 
-    def __init__(self, series: Union[pd.Series, np.array, None],
+    def __init__(self, series: Union[pd.Series, np.array],
                  process: str,
                  period: Union[str, int, float],
                  ):
@@ -14,7 +14,6 @@ class Brownian:
             self.time_series = np.array(series)
         elif type(series) == np.array:
             self.time_series = series
-
         else: raise TypeError('pd.Series or np.array')
 
         self.process = process
@@ -105,11 +104,12 @@ class Brownian:
         elif self.process == 'geometric':
             return self._gbm(S, t, confidence_level)
 
-    @classmethod
-    def simulation(cls,
+    @staticmethod
+    def simulation(
                    mu: Optional[float],
                    sigma,
                    n,
+                   dt: float,
                    initial_value: Union[int, float] = 100,
                    ):
 
@@ -117,15 +117,15 @@ class Brownian:
         X[0] = initial_value
         if cls.process == 'standard':
             for i in range(1, n):
-                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(cls.dt)
+                X[i] = X[i-1] + sigma*np.random.normal(loc=0.0, scale=1.0)*np.sqrt(dt)
 
         elif cls.process == 'arithmetic':
             for i in range(1, n):
-                X[i] = X[i-1] + mu*cls.dt + sigma*np.random.normal(loc=0.0, scale=1.0)
+                X[i] = X[i-1] + mu*dt + sigma*np.random.normal(loc=0.0, scale=1.0)
 
         elif cls.process == 'geometric':
             for i in range(1, n):
-                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*cls.dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(cls.dt))
+                X[i] = X[i-1] * np.exp((mu-0.5*sigma**2)*dt + sigma * np.random.normal(loc=0.0, scale=1.0)*np.sqrt(dt))
 
         return X
 

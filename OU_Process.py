@@ -9,7 +9,7 @@ class Ornstein_Uhlenbeck:
 
     def __init__(
             self,
-            series: Union[pd.Series, np.array, None],
+            series: Union[pd.Series, np.array],
             period: Union[str, int, float],
             method: str='least_square'):
 
@@ -17,8 +17,6 @@ class Ornstein_Uhlenbeck:
             self.time_series = np.array(series)
         elif type(series) == np.array:
             self.time_series = series
-        elif series is None:
-            self.times_series = None
         else: raise TypeError('pd.Series, np.array or None(for simulation)')
 
         self.mu = None
