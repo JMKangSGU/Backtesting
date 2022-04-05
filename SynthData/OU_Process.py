@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Union
 import statsmodels.api as sm
 from scipy.stats import t as T
-
+from scipy.optimize import minimize
 
 class Ornstein_Uhlenbeck:
 
@@ -41,12 +41,12 @@ class Ornstein_Uhlenbeck:
 
 
     def fit(self):
+        Xtm1 = self.time_series[:-1].reshape(-1, 1)
+        Xt = self.time_series[1:]
 
         if self.method == 'least_square':
-            X = self.time_series[1:]
-            X = sm.add_constant(X)
-            Y = self.time_series[:-1].reshape(-1, 1)
-            model = sm.OLS(Y, X)
+            Xtm1 = sm.add_constant(Xtm1)
+            model = sm.OLS(Xt, Xtm1)
             res = model.fit()
             alpha, phi = res.params[0], res.params[1]
             epsilon = res.mse_resid
@@ -56,7 +56,19 @@ class Ornstein_Uhlenbeck:
             self.half_life_ = np.log(2)/self.theta
 
         elif self.method == 'max_likelihood':
-            None
+            x_init = np.array([.5, 1])
+            res = minimize(fun=self.mleObject,
+                           x0=x_init,
+                           args=[Xt, Xtm1, self.dt],
+                           method='L-BFGS-B',
+                           tol=1e-100,
+                           options={'disp': False})
+            params = res.x
+            self.theta = params[0]
+            self.sigma = params[1]
+            self.mu    = 0
+            self.half_life_ = np.log(2) / self.theta
+
 
     def predict(
             self,
@@ -74,6 +86,16 @@ class Ornstein_Uhlenbeck:
         dof = len(S)-1
         self.confidence_interval_ = T.interval(cl, dof, loc=mean, scale=std)
         return S
+
+    @staticmethod
+    def mleObject(params, args):
+        Xt, Xtm1, dt = args[0], args[1], args[2]
+        theta, sigma = params[0], params[1]
+        N = Xt.shape[0]
+        func = (-N * np.log(2 * N) / 2) \
+               - (N * np.log(sigma)) \
+               - (np.sum(np.square(Xt - (Xtm1 * np.exp(-theta * dt))))) / (2 * sigma ** 2)
+        return func
 
     @staticmethod
     def simulation(mu, sigma, theta, n, dt):
